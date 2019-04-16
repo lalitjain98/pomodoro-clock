@@ -1,26 +1,27 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
+import React, {Component, Fragment} from 'react';
 import './App.css';
+
+const Clock = (props) => {
+  return (
+    <div></div>
+  )
+};
 
 class App extends Component {
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
+      <Fragment>
+        <div className="container">
+          <div style={{fontSize: "2.5em", padding: "1em 0"}}>Pomodoro Clock</div>
+          <Clock/>
+        </div>
+
+        <footer style={{textAlign: "center",padding: "1.25em 1em", borderTop: "1px solid black", fontSize: "1.25em"}}>
+          Link to github repo: <a style={{textDecoration: "none", color: "blue"}} href="https://github.com/lalitjain98/pomodoro-clock" rel="noopener noreferrer" target="_blank">github.com/lalitjain98/pomodoro-clock</a>
+        </footer>
+
+      </Fragment>
+
     );
   }
 }
