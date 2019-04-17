@@ -1,0 +1,17 @@
+{
+  "main.css": "/pomodoro-clock/static/css/main.b0a89bb6.chunk.css",
+  "main.js": "/pomodoro-clock/static/js/main.015c6dc9.chunk.js",
+  "main.js.map": "/pomodoro-clock/static/js/main.015c6dc9.chunk.js.map",
+  "runtime~main.js": "/pomodoro-clock/static/js/runtime~main.647dc629.js",
+  "runtime~main.js.map": "/pomodoro-clock/static/js/runtime~main.647dc629.js.map",
+  "static/css/2.63d9673d.chunk.css": "/pomodoro-clock/static/css/2.63d9673d.chunk.css",
+  "static/js/2.8bf03afe.chunk.js": "/pomodoro-clock/static/js/2.8bf03afe.chunk.js",
+  "static/js/2.8bf03afe.chunk.js.map": "/pomodoro-clock/static/js/2.8bf03afe.chunk.js.map",
+  "index.html": "/pomodoro-clock/index.html",
+  "precache-manifest.4ea49fe7eabf3a88ee4af123c50208a2.js": "/pomodoro-clock/precache-manifest.4ea49fe7eabf3a88ee4af123c50208a2.js",
+  "service-worker.js": "/pomodoro-clock/service-worker.js",
+  "static/css/2.63d9673d.chunk.css.map": "/pomodoro-clock/static/css/2.63d9673d.chunk.css.map",
+  "static/css/main.b0a89bb6.chunk.css.map": "/pomodoro-clock/static/css/main.b0a89bb6.chunk.css.map",
+  "static/media/index.css": "/pomodoro-clock/static/media/digital-7.1e670d88.ttf",
+  "static/media/font-awesome.css": "/pomodoro-clock/static/media/fontawesome-webfont.fee66e71.woff"
+}
