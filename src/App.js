@@ -1,7 +1,8 @@
-import React, {Component} from 'react';
+import React, {Component, Fragment} from 'react';
 import './App.css';
 import 'font-awesome/css/font-awesome.css';
 import 'reactstrap/dist/reactstrap';
+import Media from "react-media";
 
 const Row = (props) => {
   return(
@@ -37,8 +38,8 @@ const DurationController = (props) => {
       // backgroundColor: "aliceblue",
       color: "#222"
     }}>
-      <Col>
-        <Row>
+      <Col styles={{alignItems: "center", justifyContent: "center", textAlign: "center"}}>
+        <Row styles={{alignItems: "center", justifyContent: "center", textAlign: "center"}}>
           <div
             style={{
               textAlign: "center",
@@ -51,6 +52,7 @@ const DurationController = (props) => {
         </Row>
         <Row
           styles={{
+            textAlign: "center",
             justifyContent: "center",
             alignItems: "center"
           }}>
@@ -108,11 +110,6 @@ function formatTime(time) {
   time = Math.trunc(time);
   return time%10 === time ? "0" + time : time;
 }
-
-const resetAudio = (audio) => {
-  audio.currentTime = 0;
-  return audio;
-};
 
 class Clock extends Component{
   constructor(props){
@@ -310,24 +307,44 @@ class Clock extends Component{
       this.BEEP.play();
     }
 
+    const durationItems = (
+      <Fragment>
+        <DurationController
+          disabled={false}
+          idPrefix = "break"
+          title = "Break Length"
+          onClick = {(change)=>this.handleClick(BREAK_KEY, change)}
+          count = {this.state.break_/60}
+        />
+        <DurationController
+          disabled={false}
+          idPrefix = "session"
+          title = "Session Length"
+          onClick = {(change)=>this.handleClick(SESSION_KEY, change)}
+          count = {this.state.session/60}
+        />
+      </Fragment>
+    );
+
     return (
       <div>
-        <Row>
-          <DurationController
-            disabled={false}
-            idPrefix = "break"
-            title = "Break Length"
-            onClick = {(change)=>this.handleClick(BREAK_KEY, change)}
-            count = {this.state.break_/60}
-          />
-          <br/>
-          <DurationController
-            disabled={false}
-            idPrefix = "session"
-            title = "Session Length"
-            onClick = {(change)=>this.handleClick(SESSION_KEY, change)}
-            count = {this.state.session/60}
-          />
+        <Row styles={{alignItems: "center", justifyContent: "center", textAlign: "center"}}>
+          <Media query={"(max-width: 768px)"}>
+            {
+              matches => matches ?
+                (
+                  <Col>
+                    {durationItems}
+                  </Col>
+                )
+                :
+                (
+                  <Row>
+                    {durationItems}
+                  </Row>
+                )
+            }
+          </Media>
         </Row>
         <Row>
           <Col styles={{width: "-webkit-fill-available"}}>
@@ -367,11 +384,11 @@ class Clock extends Component{
               <div style={{fontFamily: "Digital-7 Mono", color: (this.state.time < 60 ? "red" : "inherit")}} id='time-left'>{`${formatTime(this.state.time/60)}:${formatTime(this.state.time%60)}`}</div>
             </Row>
             </div>
-            <Row styles={{justifyContent: "space-around"}}>
+            <Row styles={{justifyContent: "center"}}>
               <button
                 style={{
                   color: "#444",
-                  // margin: "0.5em",
+                  margin: "0.5em 1em",
                   padding: "0.5em",
                   background: "none",
                   border: "none"
@@ -386,7 +403,7 @@ class Clock extends Component{
               </button>
               <button
                 style={{
-                  // margin: "0.5em",
+                  margin: "0.5em 1em",
                   color: "#444",
                   padding: "0.5em",
                   background: "none",
@@ -412,11 +429,11 @@ class App extends Component {
     return (
       <div className="main-container">
         <div className="container">
-          <div style={{color: "#222", fontSize: "3em", padding: "0.5em 0", margin: 0}}>Pomodoro Clock</div>
+          <div style={{color: "#222", fontSize: "3em", padding: "0.5em 0", margin: 0, textAlign:"center", alignSelf: "center"}}>Pomodoro Clock</div>
           <Clock/>
         </div>
 
-        <footer style={{textAlign: "center",padding: "1.25em 1em", borderTop: "1px solid black", fontSize: "1.25em"}}>
+        <footer style={{textAlign: "center",padding: "1.25em 1em", borderTop: "1px solid black"}}>
           Link to github repo: <a style={{textDecoration: "none", color: "blue"}} href="https://github.com/lalitjain98/pomodoro-clock" rel="noopener noreferrer" target="_blank">github.com/lalitjain98/pomodoro-clock</a>
         </footer>
 
