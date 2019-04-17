@@ -220,7 +220,9 @@ class Clock extends Component{
   }
 
   resetTimer() {
-    this.BEEP = resetAudio(this.BEEP);
+    //this.BEEP = resetAudio(this.BEEP);
+    this.BEEP.pause();
+    this.BEEP.currentTime = 0;
     this.setState(state=>{
       clearInterval(this.timer);
       return {
@@ -369,7 +371,7 @@ class Clock extends Component{
                 justifyContent: "center"
               }}
             >
-              <div style={{fontFamily: "Digital-7 Mono", color: (this.state.minutes === 0 ? "red" : "inherit")}} id='time-left'>{`${formatTime(this.state.minutes)} : ${formatTime(this.state.seconds)}`}</div>
+              <div style={{fontFamily: "Digital-7 Mono", color: (this.state.minutes === 0 ? "red" : "inherit")}} id='time-left'>{`${formatTime(this.state.minutes)}:${formatTime(this.state.seconds)}`}</div>
             </Row>
             </div>
             <Row styles={{justifyContent: "space-around"}}>
