@@ -1,4 +1,4 @@
-import React, {Component, Fragment} from 'react';
+import React, {Component} from 'react';
 import './App.css';
 import 'font-awesome/css/font-awesome.css';
 import 'reactstrap/dist/reactstrap';
@@ -105,6 +105,7 @@ export const SESSION_KEY = "session";
 export const BREAK_KEY = "break_";
 
 function formatTime(time) {
+  time = Math.trunc(time);
   return time%10 === time ? "0" + time : time;
 }
 
@@ -119,8 +120,7 @@ class Clock extends Component{
     this.state = {
       session: this.SESSION_TIME_DEFAULT,
       break_: this.BREAK_TIME_DEFAULT,
-      minutes: this.SESSION_TIME_DEFAULT,
-      seconds: 0,
+      time: this.SESSION_TIME_DEFAULT,
       timerLabel: SESSION,
       running: false,
     };
@@ -133,15 +133,14 @@ class Clock extends Component{
   }
 
   BEEP = null;
-  timer = null;
-  SESSION_TIME_DEFAULT = 25; //25;
-  BREAK_TIME_DEFAULT = 5; //5;
+  clock = null;
+  SESSION_TIME_DEFAULT = 25*60; //25;
+  BREAK_TIME_DEFAULT = 5*60; //5;
   componentDidMount() {
     this.BEEP = document.getElementById("beep");
   }
 
   handleClick(key, change){
-
     this.setState(state=>{
 
       let {timerLabel, running, session, break_} = state;
@@ -153,13 +152,16 @@ class Clock extends Component{
         return newState;
       }
 
-      if((change === -1 && state[key] === 1) || (change === 1 && state[key] === 60)){
+      if((change === -1 && state[key] === 60) || (change === 1 && state[key] === 60*60)){
         return newState;
       }
 
-      console.log("Timer:", this.timer);
+      console.log("Timer:", this.clock);
       console.log("timerLabel:", timerLabel);
       console.log("Key:", key);
+
+      // convert change to seconds
+      change *= 60;
 
       // if(this.timer === null){
 
@@ -167,25 +169,18 @@ class Clock extends Component{
           if(key === SESSION_KEY){
             //change session in paused session
             newState.session = session + change;
-            newState.minutes = newState.session;
-            newState.seconds = 0;
+            newState.time = newState.session;
           } else {
-            //change break in paused session
             newState.break_ = break_ + change;
-            // newState.minutes = newState.break_;
-            // newState.seconds = 0;
           }
         } else {
           if(key === SESSION_KEY){
             //change session in paused session
             newState.session = session + change;
-            // newState.minutes = newState.session;
-            // newState.seconds = 0;
           } else {
             //change break in paused session
             newState.break_ = break_ + change;
-            newState.minutes = newState.break_;
-            newState.seconds = 0;
+            newState.time = newState.break_;
           }
         }
 
@@ -205,29 +200,23 @@ class Clock extends Component{
     }else{
       this.pauseTimer();
     }
-    // this.setState(state=>{
-    //   return {
-    //     ...state,
-    //     running: !state.running
-    //   }
-    // }, ()=>{
-    //   if(this.state.running){
-    //     this.startTimer();
-    //   }else{
-    //     this.pauseTimer();
-    //   }
-    // });
   }
 
   resetTimer() {
-    this.BEEP = resetAudio(this.BEEP);
+    console.log(
+      document.getElementById("time-left").innerText,
+      document.getElementById("session-length")
+    );
+    // this.BEEP = resetAudio(this.BEEP);
+    //this.BEEP.stop();
+    this.BEEP.pause();
+    this.BEEP.currentTime = 0;
     this.setState(state=>{
-      clearInterval(this.timer);
+      clearInterval(this.clock);
       return {
         ...state,
         timerLabel: SESSION,
-        minutes: this.SESSION_TIME_DEFAULT,//(state.timerLabel === SESSION?this.SESSION_TIME_DEFAULT:this.BREAK_TIME_DEFAULT),
-        seconds: 0,
+        time: this.SESSION_TIME_DEFAULT,
         running: false,
         session: this.SESSION_TIME_DEFAULT,
         break_: this.BREAK_TIME_DEFAULT
@@ -237,15 +226,15 @@ class Clock extends Component{
 
   handler(){
 
-    if(this.state.minutes === 0 && this.state.seconds === 0){
+    if(this.state.time === 0){
       // this.BEEP.play();
       this.setState(state=>{
-        clearInterval(this.timer);
+        clearInterval(this.clock);
         this.startTimer();
 
         return {
           ...state,
-          minutes: (state.timerLabel === SESSION?state.break_:state.session),
+          time: (state.timerLabel === SESSION?state.break_:state.session),
           running: false,
           timerLabel: (state.timerLabel === SESSION ? BREAK_ : SESSION)
         }
@@ -258,25 +247,24 @@ class Clock extends Component{
     }
 
     this.setState(state=>{
-      let minutes = state.seconds===0 ? state.minutes-1 : state.minutes;
-      let seconds = (state.seconds-1);
-      seconds = seconds < 0 ? seconds + 60 : seconds;
-
       return {
         ...state,
-        seconds: seconds,
-        minutes: minutes
+        time: state.time-1,
       }
     })
   };
 
   startTimer() {
+    console.log(
+      document.getElementById("time-left").innerText,
+      document.getElementById("session-length")
+    );
     this.setState(state=>{
-      this.timer = setInterval(this.handler, 1000);
+      this.clock = setInterval(this.handler, 1000);
       return {
         ...state,
         running: true,
-        minutes: (state.timerLabel === SESSION?state.session:state.break_),
+        time: (state.timerLabel === SESSION?state.session:state.break_),
       }
     }, ()=>{
       // this.timer = setInterval(this.handler, 1000);
@@ -284,8 +272,12 @@ class Clock extends Component{
   }
 
   pauseTimer() {
+    console.log(
+      document.getElementById("time-left").innerText,
+      document.getElementById("session-length")
+    );
     this.setState(state=>{
-      clearInterval(this.timer);
+      clearInterval(this.clock);
       return {
         ...state,
         running: false,
@@ -296,8 +288,12 @@ class Clock extends Component{
   }
 
   playTimer() {
+    console.log(
+      document.getElementById("time-left").innerText,
+      document.getElementById("session-length")
+    );
     this.setState(state=>{
-      this.timer = setInterval(this.handler, 1000);
+      this.clock = setInterval(this.handler, 1000);
       return {
         ...state,
         running: true,
@@ -310,8 +306,7 @@ class Clock extends Component{
   }
 
   render() {
-
-    if(this.state.minutes === 0 && this.state.seconds === 0){
+    if(this.state.time === 0){
       this.BEEP.play();
     }
 
@@ -323,7 +318,7 @@ class Clock extends Component{
             idPrefix = "break"
             title = "Break Length"
             onClick = {(change)=>this.handleClick(BREAK_KEY, change)}
-            count = {this.state.break_}
+            count = {this.state.break_/60}
           />
           <br/>
           <DurationController
@@ -331,7 +326,7 @@ class Clock extends Component{
             idPrefix = "session"
             title = "Session Length"
             onClick = {(change)=>this.handleClick(SESSION_KEY, change)}
-            count = {this.state.session}
+            count = {this.state.session/60}
           />
         </Row>
         <Row>
@@ -343,8 +338,8 @@ class Clock extends Component{
               fontSize: "3em",
               color: "white",
               // background: "white",
-              background: (this.state.minutes === 0 ? "linear-gradient(to bottom right, #ffdddd, #ffcccc)" : "linear-gradient(to bottom right, #009999, #008888)"),
-              border: ("10px double " + (this.state.minutes === 0 ? "red" : "white")),
+              background: (this.state.time < 60 ? "linear-gradient(to bottom right, #ffdddd, #ffcccc)" : "linear-gradient(to bottom right, #009999, #008888)"),
+              border: ("10px double " + (this.state.time < 60 ? "red" : "white")),
               borderRadius: "10px",
               boxShadow: "0 0 10px 0 white"
             }}>
@@ -356,7 +351,7 @@ class Clock extends Component{
               <div
                 style={{
                   fontFamily: "Roboto Mono, Consolas",
-                  color: (this.state.minutes === 0 ? "red" : "inherit"),
+                  color: (this.state.time < 60 ? "red" : "inherit"),
                   textAlign: "center",
                   alignSelf: "center",
                 }}
@@ -369,7 +364,7 @@ class Clock extends Component{
                 justifyContent: "center"
               }}
             >
-              <div style={{fontFamily: "Digital-7 Mono", color: (this.state.minutes === 0 ? "red" : "inherit")}} id='time-left'>{`${formatTime(this.state.minutes)} : ${formatTime(this.state.seconds)}`}</div>
+              <div style={{fontFamily: "Digital-7 Mono", color: (this.state.time < 60 ? "red" : "inherit")}} id='time-left'>{`${formatTime(this.state.time/60)}:${formatTime(this.state.time%60)}`}</div>
             </Row>
             </div>
             <Row styles={{justifyContent: "space-around"}}>
